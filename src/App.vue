@@ -185,7 +185,7 @@ export default defineComponent({
           <Icon>
             <Sort />
           </Icon>
-          <div class="carpark-detail">Type: {{ selectedCarpark.type }}</div>
+          <div class="carpark-detail">Type: {{ selectedCarpark.type }}</div> <!-- To-do: Fix type text output to display as string -->
         </div>
       </div>
     </div>
