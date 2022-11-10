@@ -13,6 +13,11 @@ const router = createRouter({
       name: "rental",
       component: () => import("../views/Rental.vue"),
     },
+    {
+      path: "/directions",
+      name: "coord",
+      component: () => import("../views/Directions.vue"),
+    },
   ],
 });
 
