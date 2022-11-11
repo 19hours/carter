@@ -18,6 +18,7 @@ export const useSpotlightStore = defineStore("spotlight", {
     },
     deactivateSpotlight() {
       this.spotlight = false;
+      this.data = {};
     },
   },
 });
