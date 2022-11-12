@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Simple House Template</title>
+    <!-- <link href="https://fonts.googleapis.com/css?family=Open+Sans:400" rel="stylesheet" />     -->
+	<link href="css/mo-style.css" rel="stylesheet" />
+</head>
+
+<style>
+	figure:hover {
+  -ms-transform: scale(1.1); /* IE 9 */
+  -webkit-transform: scale(1.1); /* Safari 3-8 */
+  transform: scale(1.1); 
+}
+</style>
+<body> 
+
+	<div class="container">
+	<!-- Top box -->
+		<!-- Logo & Site Name -->
+		<div class="placeholder">
+			<div class="parallax-window" data-parallax="scroll" data-image-src="img/street.jpeg">
+				<div class="tm-header">
+					<div class="row tm-header-inner">
+						<div class="col-md-6 col-12">
+							<!-- <img src="img/simple-house-logo.png" alt="Logo" class="tm-site-logo" />  -->
+							<div class="tm-site-text-box">
+								<h1 class="tm-site-title">CARTER</h1>
+								<!-- <h6 class="tm-site-description">new restaurant template</h6>	 -->
+							</div>
+						</div>
+						<nav class="col-md-6 col-12 tm-nav">
+							<ul class="tm-nav-ul">
+								<li class="tm-nav-li"><a href="index.html" class="tm-nav-link active">Home</a></li>
+								<li class="tm-nav-li"><a href="aboutnew.html" class="tm-nav-link">About</a></li>
+							</ul>
+						</nav>	
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<main>
+			<header class="row tm-welcome-section">
+				<h2 class="col-12 text-center tm-section-title">About Carter</h2>
+				<p class="col-12 text-center">Our app also provides GPS services for rentees to find their 
+					destination and at the same time recommends nearby points of interest for them to visit.
+					 Rentees are also able to track their cost they are incurring as they are renting the car.</p>
+			</header>
+			
+		
+
+			<!-- Gallery -->
+			<div class="row tm-gallery">
+				<!-- gallery page 1 -->
+				<div id="tm-gallery-page-pizza" class="tm-gallery-page">
+					<article class="col-lg-4 col-md-4 col-sm-6 col-12 tm-gallery-item">
+						<figure>
+							<img src="img/rent.jpeg" alt="Image" class="img-fluid tm-gallery-img" />
+							<figcaption>
+								<h4 class="tm-gallery-title">Car Rental</h4>
+								<p class="tm-gallery-description">Avoid crowd in the public transport? Just turn to Carter for car rental. Carter shows you the nearest car that you could rent as we prioritise customers' convenience and safety in getting to your destination.</p>
+								
+							</figcaption>
+						</figure>
+					</article>
+					
+					<article class="col-lg-4 col-md-4 col-sm-6 col-12 tm-gallery-item">
+						<figure>
+							<img src="img/coin.jpeg" alt="Image" class="img-fluid tm-gallery-img" />
+							<figcaption>
+								<h4 class="tm-gallery-title">No more parking bill shock</h4>
+								<p class="tm-gallery-description">Parking rates can be costly in Singapore, with Carter, it can help you make the best parking decision with the rate provided.</p>
+								
+							</figcaption>
+						</figure>
+					</article>
+					<article class="col-lg-4 col-md-4 col-sm-6 col-12 tm-gallery-item">
+						<figure>
+							<img src="img/pin.png" alt="Image" class="img-fluid tm-gallery-img" />
+							<figcaption>
+								<h4 class="tm-gallery-title">Deciding fastest, shortest and cheapest</h4>
+								<p class="tm-gallery-description">All roads lead to Rome, but some faster, others cheaper. For Carter, all it matters is the fastest, shortest and cheapest routes around Singapore. That's how we have created your route planner. Just enter your destination, and we will find these alternatives for you!</p>
+								
+							</figcaption>
+						</figure>
+					</article>
+					
+					
+					
+					
+				</div> <!-- gallery page 1 -->
+				
+		
+
+				</div> <!-- gallery page 3 -->
+			</div>
+			<div class="tm-section tm-container-inner">
+				<div class="row">
+					<div class="col-md-6">
+						
+					</div>
+					<div class="col-md-6">
+						
+					</div>
+				</div>
+			</div>
+		</main>
+
+	</div>
+	<script src="js/jquery.min.js"></script>
+	<script src="js/parallax.min.js"></script>
+	<script>
+		$(document).ready(function(){
+			// Handle click on paging links
+			$('.tm-paging-link').click(function(e){
+				e.preventDefault();
+				
+				var page = $(this).text().toLowerCase();
+				$('.tm-gallery-page').addClass('hidden');
+				$('#tm-gallery-page-' + page).removeClass('hidden');
+				$('.tm-paging-link').removeClass('active');
+				$(this).addClass("active");
+			});
+		});
+	</script>
+</body>
+</html>
