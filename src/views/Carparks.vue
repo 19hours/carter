@@ -12,10 +12,10 @@
     <mapbox-marker
       v-for="data in carparks"
       :lngLat="[data.lat, data.lng]"
-      @click="show(data)"
+      @click="show(data, String(data.lat) + String(data.lng))"
     >
       <template v-slot:icon>
-        <div class="carpark-icon">
+        <div class="carpark-icon" :class="String(data.lat) + String(data.lng) === selected && 'active'">
           {{ data.availableLots }}
         </div>
       </template>
@@ -34,6 +34,7 @@ export default defineComponent({
   computed: {
     ...mapState(useCarparkStore, ["carparks"]),
     ...mapState(useMapStore, ["location"]),
+    ...mapState(useSpotlightStore, ["selected"]),
   },
   methods: {
     ...mapActions(useSpotlightStore, ["show"]),
@@ -56,5 +57,9 @@ export default defineComponent({
   justify-content: center;
   font-size: 16px;
   transition: 0.2s all;
+}
+
+.active{
+  background-color: #4aada3;
 }
 </style>

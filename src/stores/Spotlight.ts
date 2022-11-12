@@ -7,11 +7,19 @@ export const useSpotlightStore = defineStore("spotlight", {
     return {
       data: {} as Carpark | Rental,
       spotlight: false,
+      selected: null,
     };
   },
   actions: {
-    show(target: Carpark | Rental) {
-      this.data = target;
+    show(target: Carpark | Rental, markerId) {
+      if (this.selected === markerId){
+        this.deactivateSpotlight();
+      }
+      else{
+        this.data = target;
+        this.selected = markerId;
+      }
+
     },
     activateSpotlight() {
       this.spotlight = true;
@@ -19,6 +27,7 @@ export const useSpotlightStore = defineStore("spotlight", {
     deactivateSpotlight() {
       this.spotlight = false;
       this.data = {};
+      this.selected = null;
     },
   },
 });
