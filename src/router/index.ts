@@ -15,8 +15,13 @@ const router = createRouter({
     },
     {
       path: "/directions",
-      name: "coord",
+      name: "directions",
       component: () => import("../views/Directions.vue"),
+    },
+    {
+      path: "/search",
+      name: "search",
+      component: () => import("../views/Search.vue"),
     },
   ],
 });

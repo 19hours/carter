@@ -130,7 +130,7 @@
                 fill="currentColor"
               ></path>
             </svg>
-            <span @click="directions((data as Carpark).lat,(data as Carpark).lng)" class="list-btn-text">Get Directions</span>
+            <span @click="search((data as Carpark).lat,(data as Carpark).lng, (data as Carpark).address)" class="list-btn-text">Get Directions</span>
           </div>
         </div>
       </div>
@@ -201,7 +201,7 @@
                 fill="currentColor"
               ></path>
             </svg>
-            <span @click="directions((data as Rental).lng,(data as Rental).lat)" class="list-btn-text">Get Direction</span>
+            <span @click="search((data as Rental).lng,(data as Rental).lat, (data as Rental).address)" class="list-btn-text">Get Direction</span>
           </div>
           <div
             class="list-btn spotlight-directions-btn"
@@ -292,19 +292,12 @@
         </div>
         <div class="list-btn-group">
           <div class="list-btn spotlight-directions-btn">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              xmlns:xlink="http://www.w3.org/1999/xlink"
-              viewBox="0 0 512 512"
-              class="list-btn-icon"
-            >
-              <path
-                d="M502.61 233.32L278.68 9.39c-12.52-12.52-32.83-12.52-45.36 0L9.39 233.32c-12.52 12.53-12.52 32.83 0 45.36l223.93 223.93c12.52 12.53 32.83 12.53 45.36 0l223.93-223.93c12.52-12.53 12.52-32.83 0-45.36zm-100.98 12.56l-84.21 77.73c-5.12 4.73-13.43 1.1-13.43-5.88V264h-96v64c0 4.42-3.58 8-8 8h-32c-4.42 0-8-3.58-8-8v-80c0-17.67 14.33-32 32-32h112v-53.73c0-6.97 8.3-10.61 13.43-5.88l84.21 77.73c3.43 3.17 3.43 8.59 0 11.76z"
-                fill="currentColor"
-              ></path>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-circle" viewBox="0 0 16 16">
+            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+            <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
             </svg>
             <span
-             class="list-btn-text">Info</span>
+             class="list-btn-text">More Info</span>
           </div>
         </div>
       </div>
@@ -373,6 +366,120 @@
         </div>
       </div>
     </div>
+    <div v-if="$route.name === 'search'" v-show="!spotlight">
+      <div>
+        <div class="list-dir-row">
+          <div class="list-dir-col-l">
+            From:
+          </div>
+          <div class="list-dir-col-r">
+            <input type="text" class="input-dir" id="dirFrom" v-model="dirFromInput">
+          </div>
+        </div>
+        <div class="list-dir-row">
+          <div class="list-dir-col-l">
+            To:
+          </div>
+          <div class="list-dir-col-r">
+            <input type="text" class="input-dir" id="dirTo"  v-model="dirToInput">
+          </div>
+        </div>
+        
+        <div class="list-btn-group">
+          <div class="list-btn spotlight-directions-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt-fill" viewBox="0 0 16 16">
+              <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
+            </svg>
+              <span
+              class="list-btn-text" @click="useCurrentLocation()">Use my current location</span>
+          </div>
+          <div class="list-btn spotlight-directions-btn">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+                viewBox="0 0 512 512"
+                class="list-btn-icon"
+              >
+                <path
+                  d="M502.61 233.32L278.68 9.39c-12.52-12.52-32.83-12.52-45.36 0L9.39 233.32c-12.52 12.53-12.52 32.83 0 45.36l223.93 223.93c12.52 12.53 32.83 12.53 45.36 0l223.93-223.93c12.52-12.53 12.52-32.83 0-45.36zm-100.98 12.56l-84.21 77.73c-5.12 4.73-13.43 1.1-13.43-5.88V264h-96v64c0 4.42-3.58 8-8 8h-32c-4.42 0-8-3.58-8-8v-80c0-17.67 14.33-32 32-32h112v-53.73c0-6.97 8.3-10.61 13.43-5.88l84.21 77.73c3.43 3.17 3.43 8.59 0 11.76z"
+                  fill="currentColor"
+                ></path>
+              </svg>
+              <span
+              class="list-btn-text" @click="directions()">Directions</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div v-if="$route.name === 'directions'" v-show="!spotlight">
+      <div style="padding-bottom: 1em;">
+        <div class="list-dir-row">
+          <div class="list-dir-col-l">
+            From:
+          </div>
+          <div class="list-dir-col-r">
+            <input type="text" class="input-dir" id="dirFrom" v-model="dirFromInput" disabled>
+          </div>
+        </div>
+        <div class="list-dir-row">
+          <div class="list-dir-col-l">
+            To:
+          </div>
+          <div class="list-dir-col-r">
+            <input type="text" class="input-dir" id="dirTo"  v-model="dirToInput" disabled>
+          </div>
+        </div>
+      </div>
+
+      <div class="spotlight-title">
+          Trip Details
+      </div>
+      <div class="spotlight-meta" v-if="tripDuration < 60">Trip Duration: {{tripDuration}} min 🚘</div> 
+      <div class="spotlight-meta" v-if="tripDuration >= 60">Trip Duration: {{Math.floor(tripDuration/60)}} hrs {{tripDuration - Math.floor(tripDuration/60)*60}} min 🚘</div> 
+      <table class="rate-table">
+          <thead>
+            <tr>
+              <th>BlueSG Membership Type</th>
+              <th>Cost</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Basic</td>
+              <td>${{parseFloat(Math.floor(tripDuration)*0.42).toFixed(2)}}</td>
+            </tr>
+            <tr>
+              <td>Premium (Free 1st 40 mins)</td>
+              <td>${{parseFloat((Math.max(tripDuration - 40, 0))*0.42).toFixed(2)}}</td>
+            </tr>
+          </tbody>
+      </table>
+
+      <div class="spotlight-title">
+          Turn by Turn Navigation<br>(Tap below for Text to Speech)
+      </div>
+
+      <div
+        v-for="(key, value) in turnbyturn"
+        class="list-item"
+        @click="playTTSi(value)"
+      >
+        <div class="tbt-row">
+          <div class="tbt-col-l">
+            <div class="tbt-meta">{{ key[1] }}</div>
+          </div>
+          <div class="tbt-col-r" v-if="key[0] < 1000" >
+            {{ key[0] }} <p style="font-size: 1rem; font-weight:normal;">metres</p>
+          </div>
+          <div class="tbt-col-r" v-if="key[0] >= 1000">
+            {{ parseFloat(key[0]/1000).toFixed(2) }} <p style="font-size: 1rem; font-weight:normal;">km</p>
+          </div>
+
+        </div>
+        
+      </div>
+    </div>
   </div>
 </template>
 
@@ -432,11 +539,35 @@ export default defineComponent({
         this.activateSpotlight(latlng);
       }
     },
-    directions(lat: number, lng: number){
-      this.$router.push({ name: "coord" });
-      this.setDestination(lng, lat);
+    useCurrentLocation(){
+      if ("geolocation" in navigator) {
+      /* geolocation is available */
+        navigator.geolocation.getCurrentPosition((position) => {
+          var startlat = position.coords.longitude;
+          var startlng = position.coords.latitude;
+          this.geocoords = [startlat, startlng]
+          this.dirFromInput = "Use Current Location"
+        })
+      }
+      else{
+        this.dirFromInput = "Geolocation not enabled"
+      }
     },
-    ...mapActions(useMapStore, ["setDestination"]),
+    directions(){
+      this.getLocation(this.dirFromInput, this.dirToInput);
+      if (this.toCoords != null && this.fromCoords != null){
+        setTimeout( () => this.setLocation(this.fromCoords, this.toCoords), 1000);
+        setTimeout( () => this.$router.push({ name: "directions" }), 1000);
+      }
+    },
+    search(lng, lat, placeName){
+      this.toCoords = [lat, lng]
+      this.dirToInput = placeName
+      this.directionSet = true
+      this.deactivateSpotlight()
+      this.$router.push({ name: "search" })
+    },
+    ...mapActions(useDirectionStore, ["setLocation"]),
     getCarparkRates(address: string) {
       let data = [];
       for (let carpark of rawCarparks) {
@@ -486,6 +617,53 @@ export default defineComponent({
       }
       return data;
     },
+    getLocation(fromLoc, toLoc){
+      const url = "https://developers.onemap.sg/commonapi/search"
+
+      if (this.dirFromInput === "Use Current Location"){
+        this.fromCoords = this.geocoords
+      }
+      else{
+        this.axios.get(url, {
+        params:{
+          searchVal: fromLoc,
+          returnGeom: "Y",
+          getAddrDetails: "N"
+        }
+        })
+        .then(res => {
+          if (res.data.results.length > 0){
+            this.fromCoords = [res.data.results[0].LATITUDE, res.data.results[0].LONGITUDE]
+          }
+          else{
+            this.dirFromInput = "Invalid Address"
+          }
+        })
+      }
+
+      if (!this.directionSet){
+        this.axios.get(url, {
+        params:{
+          searchVal: toLoc,
+          returnGeom: "Y",
+          getAddrDetails: "N"
+        }
+      })
+      .then(res => {
+        if (res.data.results.length > 0){
+          this.toCoords = [res.data.results[0].LATITUDE, res.data.results[0].LONGITUDE]
+        }
+        else{
+          this.dirToInput = "Invalid Address"
+        }
+      })
+      }
+
+    },
+    playTTSi(num){
+      var audio = new Audio(this.ttsAudio[num]);
+      audio.play()
+    },
     ...mapActions(useSpotlightStore, [
       "show",
       "activateSpotlight",
@@ -516,7 +694,7 @@ export default defineComponent({
     ...mapState(useCarparkStore, ["carparks"]),
     ...mapState(useRentalStore, ["rentals"]),
     ...mapState(useSpotlightStore, ["data", "spotlight"]),
-    ...mapState(useDirectionStore, ["route"]),
+    ...mapState(useDirectionStore, ["route", "turnbyturn", "tripDuration", "ttsAudio"]),
   },
   watch: {
     data: {
@@ -532,6 +710,13 @@ export default defineComponent({
     return {
       rawCarparks,
       rates: [] as DayRate[] | DayRate,
+      dirFromInput: "",
+      dirToInput: "",
+      toCoords: [0,0],
+      fromCoords: [0,0],
+      geocoords: [],
+      directionSet: false,
+      selected: "",
     };
   },
 });
@@ -586,6 +771,21 @@ export default defineComponent({
   align-items: center;
   justify-content: space-between;
   width: 100%;
+}
+.tbt-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding-bottom: 0.5rem;
+}
+.list-dir-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 1rem;
+  padding-top: 0.5rem;
+  font-weight: 500;
 }
 .carpark-lots {
   font-size: 1.2rem;
@@ -649,6 +849,43 @@ export default defineComponent({
 .list-col-r {
   float: left;
   width: 30%;
+}
+
+.tbt-col-r {
+  float: left;
+  width: 30%;
+  font-size: 1.5rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+.tbt-col-l {
+  padding-left: 1rem;
+  float: left;
+  width: 60%;
+  text-align: center;
+}
+
+.list-dir-col-l{
+  float: left;
+  width: 20%;
+}
+
+.list-dir-col-r{
+  float: left;
+  width: 80%;
+  padding-right: 2rem;
+}
+
+.input-dir{
+  display: flex;
+  width: 100%;  
+  height: 2rem;
+  box-sizing: border-box;
+  border: 0.08rem solid #8f8f8f;
+  border-radius: 4px;
+  font-size: 1rem;
+  padding-left: 0.5rem;
 }
 
 .list-meta-car {

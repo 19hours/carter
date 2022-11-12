@@ -5,17 +5,8 @@
     :center="coords" :auto-resize="true">
     <mapbox-navigation-control position="bottom-left" />
 
-
   </mapbox-map>
 
-      <div id="title">
-      <button @click="playTTS()">speech</button>     
-      </div>      
-  <div id="instructions">
-    <div v-if="!loaded">
-      <div class="loader"></div>
-    </div>
-  </div>
 </template>
   
 <script lang="ts">
@@ -34,32 +25,31 @@ export default defineComponent({
       coords: [103.852119, 1.296568],
       stepsSpeech: [] as Array<string>,
       loaded: false,
-      textResponse:'',
-      textLoaded: false,
+      ttsAudio: "",
+      ttsSpeech:{},
+      ttsResponse: [],
+      ttsLoaded: false,
+      tripInstructions: [],
       // geoJsonLayer:{},
       // geoJsonSource:{}
 
     }
   },
   mounted() {
-    if ("geolocation" in navigator) {
-      /* geolocation is available */
-      navigator.geolocation.getCurrentPosition((position) => {
-        var startlat = position.coords.longitude;
-        var startlng = position.coords.latitude;
-        this.coords = [startlat, startlng]
-        this.getRoute()
-
-      });
+    if (this.fromCoords.length == 0){
+      this.$router.push({ name: "search" })
     }
+    this.getRoute()
+    
   },
   methods: {
     ...mapActions(useDirectionStore, ["getRoute"]),
-
-
+    ...mapActions(useDirectionStore, ["storeInstructions"]),
+    ...mapActions(useDirectionStore, ["setTripDur"]),
+    ...mapActions(useDirectionStore, ["storeTTS"]),
     getRoute() {
       this.loaded = true
-      const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${this.coords[0]},${this.coords[1]};${this.destination.lat},${this.destination.lng}?steps=true&geometries=geojson&access_token=${this.token}`
+      const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${this.fromCoords[1]},${this.fromCoords[0]};${this.toCoords[1]},${this.toCoords[0]}?steps=true&geometries=geojson&access_token=${this.token}`
       this.axios.get(url)
         .then((res) => {
           var query = res.data
@@ -96,46 +86,35 @@ export default defineComponent({
 
           this.getRoute = data
 
-          const instructions = document.getElementById('instructions');
-          const title = document.getElementById('title');
           const steps = data.legs[0].steps;
           
 
-          if (instructions && title) {
-            let tripInstructions = '';
-            title.innerHTML += `<div 
-              style="position: relative; top:0px; color:white;"><h4>
-              Trip duration: ${Math.floor(
-              data.duration / 60
-            )} min 🚘 </h4></div><div style="margin:10px">${tripInstructions}</div>`;
+          let tripInstructions = '';
+          this.setTripDur(Math.floor(data.duration / 60))
 
-            for (const step in steps) {
-              var distance = steps[step].distance
-              this.stepsSpeech.push(steps[step].maneuver.instruction)
-              tripInstructions += `
-                      <div>
-                      In ${Math.round(distance)} metres, <br>
-                          <b>${steps[step].maneuver.instruction}</b>
-                          <hr>
-                      </di>`;
-            }
-
-            instructions.innerHTML = tripInstructions
-            this.getTTS()
+          for (const step in steps){
+            var distance = steps[step].distance
+            var roundedDist = Math.round(distance)
+            var maneuverInstr = steps[step].maneuver.instruction
+            this.ttsSpeech[step] = (`In ${roundedDist} metres, ${maneuverInstr}`)
+            this.stepsSpeech.push(steps[step].maneuver.instruction)              
+            this.tripInstructions.push([roundedDist, maneuverInstr])
           }
-
-
-
-        })
+          
+          this.storeInstructions(this.tripInstructions)
+          for (const key in this.ttsSpeech){
+            setTimeout( () => this.getTTS(this.ttsSpeech[key], key), 2000);
+          }
+          this.ttsLoaded = true
+          this.loaded = true
+          this.storeTTS(this.ttsResponse)
+        })  
     },
-    getTTS() {
+    getTTS(textContent, key) {
       var url = "http://api.voicerss.org/"
-      // var textContent = 'hello'
-      var textContent = this.stepsSpeech[0]
-      console.log(this.stepsSpeech[0])
       this.axios.get(url, {
         params: {
-          'key': '3324ba20f87d4eb890cda72790b73d8b',
+          'key': '36ea24db9bf04d4eb54afe0521194973',
           'src': textContent,
           'hl': 'en-us',
           'c': 'MP3',
@@ -143,24 +122,18 @@ export default defineComponent({
         }
       })
         .then(response => {
-          this.textResponse = response.data
-          console.log(this.textResponse)
-          this.textLoaded = true
+          this.ttsResponse[key] = response.data
         })
         .catch(error => {
           console.log(error.message)
         });
     },
-    playTTS(){
-      console.log('playtts')
-      var audio = new Audio(this.textResponse);
-      
-      audio.play();
-    },
     ...mapActions(useMapStore, ["flyTo"])
   },
   computed: {
     ...mapState(useMapStore, ["destination"]),
+    ...mapState(useDirectionStore, ["toCoords", "fromCoords", "turnbyturn"]),
+
 
 
   },
