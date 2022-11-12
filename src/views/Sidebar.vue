@@ -115,7 +115,7 @@
                 fill="currentColor"
               ></path>
             </svg>
-            <span class="list-btn-text">Get Directions</span>
+            <span @click="directions((data as Carpark).lat,(data as Carpark).lng)" class="list-btn-text">Get Directions</span>
           </div>
         </div>
       </div>
@@ -186,7 +186,7 @@
                 fill="currentColor"
               ></path>
             </svg>
-            <span class="list-btn-text">Get Directions</span>
+            <span @click="directions((data as Rental).lng,(data as Rental).lat)" class="list-btn-text">Get Direction</span>
           </div>
           <div
             class="list-btn spotlight-directions-btn"
@@ -282,7 +282,8 @@
                 fill="currentColor"
               ></path>
             </svg>
-            <span @click="directions(carpark.lat,carpark.lng)" class="list-btn-text">Get Directions</span>
+            <span
+             class="list-btn-text">Info</span>
           </div>
         </div>
       </div>
@@ -332,7 +333,7 @@
                 fill="currentColor"
               ></path>
             </svg>
-            <span class="list-btn-text">Get Directions</span>
+            <span class="list-btn-text">Info</span>
           </div>
           <div class="list-btn">
             <svg
