@@ -102,7 +102,7 @@
               <td>{{ carparkRate.startTime }} - {{ carparkRate.endTime }}</td>
               <td>
                 {{
-                  carparkRate.rate !== 0.0 ? `$${parseFloat(carparkRate.rate).toFixed(2)}` : "Free"
+                  carparkRate.rate !== 0.0 ? (carparkRate.rate === -1 ? "No Short Term Parking" : (carparkRate.rate === "Free" ? "Free" : `$${parseFloat(carparkRate.rate).toFixed(2)}`)) : "Free"
                 }}
               </td>
             </tr>
@@ -291,7 +291,7 @@
           </div>
         </div>
         <div class="list-btn-group">
-          <div class="list-btn">
+          <div class="list-btn spotlight-directions-btn">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -476,7 +476,7 @@ export default defineComponent({
                     day: dayParsed,
                     startTime,
                     endTime,
-                    rate: subRate.rate_cost === -1 ? "Free" : subRate.rate_cost,
+                    rate: subRate.rate_cost,
                   });
                 }
               }
@@ -605,6 +605,7 @@ export default defineComponent({
   width: 100%;
   border-top: 1px solid #e2e2e2;
   z-index: 10;
+  margin-top: 10px;
 }
 .list-btn {
   display: flex;
