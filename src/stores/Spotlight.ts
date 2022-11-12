@@ -22,7 +22,6 @@ export const useSpotlightStore = defineStore("spotlight", {
 
     },
     activateSpotlight(markerId) {
-      console.log(markerId)
       this.spotlight = true;
       this.selected = markerId;
     },

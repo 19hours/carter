@@ -572,6 +572,8 @@ export default defineComponent({
       let data = [];
       for (let carpark of rawCarparks) {
         if (address === carpark.address) {
+
+          
           if (carpark.parking_rate instanceof Array) {
             for (let rate of carpark.parking_rate) {
               let days = rate.day.toString().split("");
