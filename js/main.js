@@ -29,14 +29,14 @@ window.addEventListener('scroll',function(){
 //redirect
 
 document.getElementById("findCarPark").onclick = function () {
-    location.href = "https://carter.pages.dev/";
+    location.href = "/";
 };
 
 document.getElementById("rental").onclick = function () {
-    location.href = "https://carter.pages.dev/";
+    location.href = "/";
 };
 
 
 document.getElementById("lots").onclick = function () {
-    location.href = "https://carter.pages.dev/";
+    location.href = "/";
 };
