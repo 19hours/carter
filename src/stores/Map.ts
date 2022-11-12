@@ -7,6 +7,10 @@ export const useMapStore = defineStore("map", {
         lng: 103.852119,
         lat: 1.296568,
       },
+      destination: {
+        lng: 103.852119,
+        lat: 1.296568,
+      }
     };
   },
   actions: {
@@ -14,5 +18,9 @@ export const useMapStore = defineStore("map", {
       this.location.lng = lng;
       this.location.lat = lat;
     },
+    setDestination(lng: number, lat: number) {
+      this.destination.lat = lat;
+      this.destination.lng = lng;
+    }
   },
 });

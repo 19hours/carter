@@ -130,7 +130,7 @@
                 fill="currentColor"
               ></path>
             </svg>
-            <span class="list-btn-text">Get Directions</span>
+            <span @click="directions((data as Carpark).lat,(data as Carpark).lng)" class="list-btn-text">Get Directions</span>
           </div>
         </div>
       </div>
@@ -201,7 +201,7 @@
                 fill="currentColor"
               ></path>
             </svg>
-            <span class="list-btn-text">Get Directions</span>
+            <span @click="directions((data as Rental).lng,(data as Rental).lat)" class="list-btn-text">Get Direction</span>
           </div>
           <div
             class="list-btn spotlight-directions-btn"
@@ -303,7 +303,8 @@
                 fill="currentColor"
               ></path>
             </svg>
-            <span class="list-btn-text">Get Directions</span>
+            <span
+             class="list-btn-text">Info</span>
           </div>
         </div>
       </div>
@@ -353,7 +354,7 @@
                 fill="currentColor"
               ></path>
             </svg>
-            <span class="list-btn-text">Get Directions</span>
+            <span class="list-btn-text">Info</span>
           </div>
           <div class="list-btn">
             <svg
@@ -385,6 +386,7 @@ import { useMapStore } from "@/stores/Map";
 import { useRentalStore, type Rental } from "@/stores/Rental";
 import { useSpotlightStore } from "@/stores/Spotlight";
 import rawCarparks from "@/assets/data/carparks.json";
+import { useDirectionStore } from "@/stores/directions";
 
 interface Rate {
   time_range: string;
@@ -430,6 +432,11 @@ export default defineComponent({
         this.activateSpotlight(latlng);
       }
     },
+    directions(lat: number, lng: number){
+      this.$router.push({ name: "coord" });
+      this.setDestination(lng, lat);
+    },
+    ...mapActions(useMapStore, ["setDestination"]),
     getCarparkRates(address: string) {
       let data = [];
       for (let carpark of rawCarparks) {
@@ -509,6 +516,7 @@ export default defineComponent({
     ...mapState(useCarparkStore, ["carparks"]),
     ...mapState(useRentalStore, ["rentals"]),
     ...mapState(useSpotlightStore, ["data", "spotlight"]),
+    ...mapState(useDirectionStore, ["route"]),
   },
   watch: {
     data: {
