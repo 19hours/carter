@@ -7,7 +7,7 @@
       >
         <div class="spotlight-title">
           {{ (data as Carpark).address }}
-          <div @click="toggleSpotlight()">
+          <div @click="toggleSpotlight(String((data as Carpark).lat) + String((data as Carpark).lng))">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -21,66 +21,72 @@
             </svg>
           </div>
         </div>
-        <div class="spotlight-row">
-          <div class="spotlight-meta">
-            {{
-              (data as Carpark).freeParking === "NO"
-                ? "Paid parking available"
-                : "Free parking available"
-            }}
-          </div>
-          <div>
-            <div class="carpark-lots">
-              {{ (data as Carpark).availableLots }} /
-              {{ (data as Carpark).totalLots }}
+
+        <div class="list-row">
+          <div class="list-col">
+            <div class="spotlight-meta">
+              {{
+                (data as Carpark).shortTermParking === "No"
+                  ? "No parking only"
+                  : "Short term parking available"
+              }}
             </div>
-            <div class="carpark-indicator">
-              <div
-                class="indicator"
-                :class="
-                (data as Carpark).availableLots / (data as Carpark).totalLots >= 0.25
-                  ? 'indicator-green'
-                  : (data as Carpark).availableLots > 0
-                  ? 'indicator-orange'
-                  : ''
-              "
-              ></div>
-              <div
-                class="indicator"
-                :class="
-                (data as Carpark).availableLots / (data as Carpark).totalLots >= 0.5
-                  ? 'indicator-green'
-                  : ''
-              "
-              ></div>
-              <div
-                class="indicator"
-                :class="
-                (data as Carpark).availableLots / (data as Carpark).totalLots >= 0.75
-                  ? 'indicator-green'
-                  : ''
-              "
-              ></div>
-              <div
-                class="indicator"
-                :class="
-                (data as Carpark).availableLots / (data as Carpark).totalLots >= 0.9
-                  ? 'indicator-green'
-                  : ''
-              "
-              ></div>
+            <div class="spotlight-meta">{{ (data as Carpark).type }} carpark</div>
+            <div class="spotlight-meta">
+              Height restriction: {{ (data as Carpark).gantryHeight }}m
+            </div>
+            <div class="spotlight-meta">
+              Carpark Decks: {{ (data as Carpark).carParkDecks }}
+            </div>
+            <div class="spotlight-meta">System: {{ (data as Carpark).system }}</div>
+          </div>
+          <div class="list-col-r">
+            <div>
+              <div class="carpark-lots" :class="(data as Carpark).availableLots == 0 && 'carpark-lots-none'">
+                {{ (data as Carpark).availableLots }} / {{ (data as Carpark).totalLots }}
+              </div>
+              <div class="carpark-indicator">
+                <div
+                  class="indicator"
+                  :class="
+                    (data as Carpark).availableLots / (data as Carpark).totalLots >= 0.25
+                      ? 'indicator-green'
+                      : (data as Carpark).availableLots > 0
+                      ? 'indicator-orange'
+                      : ''
+                  "
+                ></div>
+                <div
+                  class="indicator"
+                  :class="
+                    (data as Carpark).availableLots / (data as Carpark).totalLots >= 0.5
+                      ? 'indicator-green'
+                      : ''
+                  "
+                ></div>
+                <div
+                  class="indicator"
+                  :class="
+                    (data as Carpark).availableLots / (data as Carpark).totalLots >= 0.75
+                      ? 'indicator-green'
+                      : ''
+                  "
+                ></div>
+                <div
+                  class="indicator"
+                  :class="
+                    (data as Carpark).availableLots / (data as Carpark).totalLots >= 0.9
+                      ? 'indicator-green'
+                      : ''
+                  "
+                ></div>
+              </div>
+              <div class="list-meta-r" v-if="(data as Carpark).availableLots != 0">Carpark lots available</div>
+              <div class="list-meta-r" v-if="(data as Carpark).availableLots == 0">No carpark lots  </div>
             </div>
           </div>
         </div>
-        <div class="spotlight-meta">{{ (data as Carpark).type }} carpark</div>
-        <div class="spotlight-meta">
-          Height restrictions: {{ (data as Carpark).gantryHeight }}m
-        </div>
-        <div class="spotlight-meta">
-          Carpark Decks: {{ (data as Carpark).carParkDecks }}
-        </div>
-        <div class="spotlight-meta">System: {{ (data as Carpark).system }}</div>
-        <table class="rate-table">
+        <table class="rate-table" v-if="(data as Carpark).shortTermParking === 'Yes'">
           <thead>
             <tr>
               <th>Day</th>
@@ -96,12 +102,21 @@
               <td>{{ carparkRate.startTime }} - {{ carparkRate.endTime }}</td>
               <td>
                 {{
-                  carparkRate.rate !== "Free" ? `$${carparkRate.rate}` : "Free"
+                  carparkRate.rate !== 0.0 ? (carparkRate.rate === -1 ? "No Short Term Parking" : (carparkRate.rate === "Free" ? "Free" : `$${parseFloat(carparkRate.rate).toFixed(2)}`)) : "Free"
                 }}
               </td>
             </tr>
           </tbody>
         </table>
+
+        <table class="rate-table" v-if="(data as Carpark).shortTermParking === 'No'">
+          <thead>
+            <tr>
+              <th>No parking available</th>
+            </tr>
+          </thead>
+        </table>
+
         <div class="list-btn-group">
           <div class="list-btn spotlight-directions-btn">
             <svg
@@ -115,7 +130,7 @@
                 fill="currentColor"
               ></path>
             </svg>
-            <span class="list-btn-text">Get Directions</span>
+            <span @click="search((data as Carpark).lat,(data as Carpark).lng, (data as Carpark).address)" class="list-btn-text">Get Directions</span>
           </div>
         </div>
       </div>
@@ -127,7 +142,7 @@
       >
         <div class="spotlight-title">
           {{ (data as Rental).address }}
-          <div @click="toggleSpotlight()">
+          <div @click="toggleSpotlight(String((data as Rental).lat) + String((data as Rental).lng))">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -186,7 +201,7 @@
                 fill="currentColor"
               ></path>
             </svg>
-            <span class="list-btn-text">Get Directions</span>
+            <span @click="search((data as Rental).lng,(data as Rental).lat, (data as Rental).address)" class="list-btn-text">Get Direction</span>
           </div>
           <div
             class="list-btn spotlight-directions-btn"
@@ -216,73 +231,73 @@
       >
         <div class="list-title">{{ carpark.address }}</div>
         <div class="list-row">
-          <div class="list-meta">
-            {{
-              carpark.freeParking === "NO"
-                ? "Paid parking available"
-                : "Free parking available"
-            }}
-          </div>
-          <div>
-            <div class="carpark-lots">
-              {{ carpark.availableLots }} / {{ carpark.totalLots }}
+          <div class="list-col">
+            <div class="list-meta">
+              {{
+                (data as Carpark).shortTermParking === "No"
+                  ? "No parking only"
+                  : "Short term parking available"
+              }}
             </div>
-            <div class="carpark-indicator">
-              <div
-                class="indicator"
-                :class="
-                  carpark.availableLots / carpark.totalLots >= 0.25
-                    ? 'indicator-green'
-                    : carpark.availableLots > 0
-                    ? 'indicator-orange'
-                    : ''
-                "
-              ></div>
-              <div
-                class="indicator"
-                :class="
-                  carpark.availableLots / carpark.totalLots >= 0.5
-                    ? 'indicator-green'
-                    : ''
-                "
-              ></div>
-              <div
-                class="indicator"
-                :class="
-                  carpark.availableLots / carpark.totalLots >= 0.75
-                    ? 'indicator-green'
-                    : ''
-                "
-              ></div>
-              <div
-                class="indicator"
-                :class="
-                  carpark.availableLots / carpark.totalLots >= 0.9
-                    ? 'indicator-green'
-                    : ''
-                "
-              ></div>
+            <div class="list-meta">{{ carpark.type }} carpark</div>
+            <div class="list-meta">
+              Height restriction: {{ carpark.gantryHeight }}m
             </div>
           </div>
-        </div>
-        <div class="list-meta">{{ carpark.type }} carpark</div>
-        <div class="list-meta">
-          Height restrictions: {{ carpark.gantryHeight }}m
+          <div class="list-col-r">
+            <div>
+              <div class="carpark-lots" :class="carpark.availableLots == 0 && 'carpark-lots-none'">
+                {{ carpark.availableLots }} / {{ carpark.totalLots }}
+              </div>
+              <div class="carpark-indicator">
+                <div
+                  class="indicator"
+                  :class="
+                    carpark.availableLots / carpark.totalLots >= 0.25
+                      ? 'indicator-green'
+                      : carpark.availableLots > 0
+                      ? 'indicator-orange'
+                      : ''
+                  "
+                ></div>
+                <div
+                  class="indicator"
+                  :class="
+                    carpark.availableLots / carpark.totalLots >= 0.5
+                      ? 'indicator-green'
+                      : ''
+                  "
+                ></div>
+                <div
+                  class="indicator"
+                  :class="
+                    carpark.availableLots / carpark.totalLots >= 0.75
+                      ? 'indicator-green'
+                      : ''
+                  "
+                ></div>
+                <div
+                  class="indicator"
+                  :class="
+                    carpark.availableLots / carpark.totalLots >= 0.9
+                      ? 'indicator-green'
+                      : ''
+                  "
+                ></div>
+              </div>
+              <div class="list-meta-r" v-if="carpark.availableLots != 0">Carpark lots available</div>
+              <div class="list-meta-r" v-if="carpark.availableLots == 0">No carpark lots  </div>
+            </div>
+          </div>
         </div>
         <div class="list-btn-group">
-          <div class="list-btn">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              xmlns:xlink="http://www.w3.org/1999/xlink"
-              viewBox="0 0 512 512"
-              class="list-btn-icon"
-            >
-              <path
-                d="M502.61 233.32L278.68 9.39c-12.52-12.52-32.83-12.52-45.36 0L9.39 233.32c-12.52 12.53-12.52 32.83 0 45.36l223.93 223.93c12.52 12.53 32.83 12.53 45.36 0l223.93-223.93c12.52-12.53 12.52-32.83 0-45.36zm-100.98 12.56l-84.21 77.73c-5.12 4.73-13.43 1.1-13.43-5.88V264h-96v64c0 4.42-3.58 8-8 8h-32c-4.42 0-8-3.58-8-8v-80c0-17.67 14.33-32 32-32h112v-53.73c0-6.97 8.3-10.61 13.43-5.88l84.21 77.73c3.43 3.17 3.43 8.59 0 11.76z"
-                fill="currentColor"
-              ></path>
+          <div class="list-btn spotlight-directions-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-circle" viewBox="0 0 16 16">
+            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+            <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
             </svg>
-            <span class="list-btn-text">Get Directions</span>
+            <span
+             class="list-btn-text">More Info</span>
           </div>
         </div>
       </div>
@@ -332,7 +347,7 @@
                 fill="currentColor"
               ></path>
             </svg>
-            <span class="list-btn-text">Get Directions</span>
+            <span class="list-btn-text">Info</span>
           </div>
           <div class="list-btn">
             <svg
@@ -351,6 +366,120 @@
         </div>
       </div>
     </div>
+    <div v-if="$route.name === 'search'" v-show="!spotlight">
+      <div>
+        <div class="list-dir-row">
+          <div class="list-dir-col-l">
+            From:
+          </div>
+          <div class="list-dir-col-r">
+            <input type="text" class="input-dir" id="dirFrom" v-model="dirFromInput">
+          </div>
+        </div>
+        <div class="list-dir-row">
+          <div class="list-dir-col-l">
+            To:
+          </div>
+          <div class="list-dir-col-r">
+            <input type="text" class="input-dir" id="dirTo"  v-model="dirToInput">
+          </div>
+        </div>
+        
+        <div class="list-btn-group">
+          <div class="list-btn spotlight-directions-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt-fill" viewBox="0 0 16 16">
+              <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
+            </svg>
+              <span
+              class="list-btn-text" @click="useCurrentLocation()">Use my current location</span>
+          </div>
+          <div class="list-btn spotlight-directions-btn">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+                viewBox="0 0 512 512"
+                class="list-btn-icon"
+              >
+                <path
+                  d="M502.61 233.32L278.68 9.39c-12.52-12.52-32.83-12.52-45.36 0L9.39 233.32c-12.52 12.53-12.52 32.83 0 45.36l223.93 223.93c12.52 12.53 32.83 12.53 45.36 0l223.93-223.93c12.52-12.53 12.52-32.83 0-45.36zm-100.98 12.56l-84.21 77.73c-5.12 4.73-13.43 1.1-13.43-5.88V264h-96v64c0 4.42-3.58 8-8 8h-32c-4.42 0-8-3.58-8-8v-80c0-17.67 14.33-32 32-32h112v-53.73c0-6.97 8.3-10.61 13.43-5.88l84.21 77.73c3.43 3.17 3.43 8.59 0 11.76z"
+                  fill="currentColor"
+                ></path>
+              </svg>
+              <span
+              class="list-btn-text" @click="directions()">Directions</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div v-if="$route.name === 'directions'" v-show="!spotlight">
+      <div style="padding-bottom: 1em;">
+        <div class="list-dir-row">
+          <div class="list-dir-col-l">
+            From:
+          </div>
+          <div class="list-dir-col-r">
+            <input type="text" class="input-dir" id="dirFrom" v-model="dirFromInput" disabled>
+          </div>
+        </div>
+        <div class="list-dir-row">
+          <div class="list-dir-col-l">
+            To:
+          </div>
+          <div class="list-dir-col-r">
+            <input type="text" class="input-dir" id="dirTo"  v-model="dirToInput" disabled>
+          </div>
+        </div>
+      </div>
+
+      <div class="spotlight-title">
+          Trip Details
+      </div>
+      <div class="spotlight-meta" v-if="tripDuration < 60">Trip Duration: {{tripDuration}} min 🚘</div> 
+      <div class="spotlight-meta" v-if="tripDuration >= 60">Trip Duration: {{Math.floor(tripDuration/60)}} hrs {{tripDuration - Math.floor(tripDuration/60)*60}} min 🚘</div> 
+      <table class="rate-table">
+          <thead>
+            <tr>
+              <th>BlueSG Membership Type</th>
+              <th>Cost</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Basic</td>
+              <td>${{parseFloat(Math.floor(tripDuration)*0.42).toFixed(2)}}</td>
+            </tr>
+            <tr>
+              <td>Premium (Free 1st 40 mins)</td>
+              <td>${{parseFloat((Math.max(tripDuration - 40, 0))*0.42).toFixed(2)}}</td>
+            </tr>
+          </tbody>
+      </table>
+
+      <div class="spotlight-title">
+          Turn by Turn Navigation<br>(Tap below for Text to Speech)
+      </div>
+
+      <div
+        v-for="(key, value) in turnbyturn"
+        class="list-item"
+        @click="playTTSi(value)"
+      >
+        <div class="tbt-row">
+          <div class="tbt-col-l">
+            <div class="tbt-meta">{{ key[1] }}</div>
+          </div>
+          <div class="tbt-col-r" v-if="key[0] < 1000" >
+            {{ key[0] }} <p style="font-size: 1rem; font-weight:normal;">metres</p>
+          </div>
+          <div class="tbt-col-r" v-if="key[0] >= 1000">
+            {{ parseFloat(key[0]/1000).toFixed(2) }} <p style="font-size: 1rem; font-weight:normal;">km</p>
+          </div>
+
+        </div>
+        
+      </div>
+    </div>
   </div>
 </template>
 
@@ -364,6 +493,7 @@ import { useMapStore } from "@/stores/Map";
 import { useRentalStore, type Rental } from "@/stores/Rental";
 import { useSpotlightStore } from "@/stores/Spotlight";
 import rawCarparks from "@/assets/data/carparks.json";
+import { useDirectionStore } from "@/stores/directions";
 
 interface Rate {
   time_range: string;
@@ -395,7 +525,6 @@ export default defineComponent({
         useMap.flyTo(location.lng, location.lat);
       }
       this.show(location);
-      this.activateSpotlight();
     },
     bookRentalCar() {
       window.open("https://membership.bluesg.com.sg/account/home/");
@@ -403,17 +532,48 @@ export default defineComponent({
     isCarpark(data: Carpark | Rental): data is Carpark {
       return (<Carpark>data).availableLots !== undefined;
     },
-    toggleSpotlight() {
+    toggleSpotlight(latlng) {
       if (this.spotlight) {
         this.deactivateSpotlight();
       } else {
-        this.activateSpotlight();
+        this.activateSpotlight(latlng);
       }
     },
+    useCurrentLocation(){
+      if ("geolocation" in navigator) {
+      /* geolocation is available */
+        navigator.geolocation.getCurrentPosition((position) => {
+          var startlat = position.coords.longitude;
+          var startlng = position.coords.latitude;
+          this.geocoords = [startlat, startlng]
+          this.dirFromInput = "Use Current Location"
+        })
+      }
+      else{
+        this.dirFromInput = "Geolocation not enabled"
+      }
+    },
+    directions(){
+      this.getLocation(this.dirFromInput, this.dirToInput);
+      if (this.toCoords != null && this.fromCoords != null){
+        setTimeout( () => this.setLocation(this.fromCoords, this.toCoords), 1000);
+        setTimeout( () => this.$router.push({ name: "directions" }), 1000);
+      }
+    },
+    search(lng, lat, placeName){
+      this.toCoords = [lat, lng]
+      this.dirToInput = placeName
+      this.directionSet = true
+      this.deactivateSpotlight()
+      this.$router.push({ name: "search" })
+    },
+    ...mapActions(useDirectionStore, ["setLocation"]),
     getCarparkRates(address: string) {
       let data = [];
       for (let carpark of rawCarparks) {
         if (address === carpark.address) {
+
+          
           if (carpark.parking_rate instanceof Array) {
             for (let rate of carpark.parking_rate) {
               let days = rate.day.toString().split("");
@@ -449,7 +609,7 @@ export default defineComponent({
                     day: dayParsed,
                     startTime,
                     endTime,
-                    rate: subRate.rate_cost === -1 ? "Free" : subRate.rate_cost,
+                    rate: subRate.rate_cost,
                   });
                 }
               }
@@ -458,6 +618,53 @@ export default defineComponent({
         }
       }
       return data;
+    },
+    getLocation(fromLoc, toLoc){
+      const url = "https://developers.onemap.sg/commonapi/search"
+
+      if (this.dirFromInput === "Use Current Location"){
+        this.fromCoords = this.geocoords
+      }
+      else{
+        this.axios.get(url, {
+        params:{
+          searchVal: fromLoc,
+          returnGeom: "Y",
+          getAddrDetails: "N"
+        }
+        })
+        .then(res => {
+          if (res.data.results.length > 0){
+            this.fromCoords = [res.data.results[0].LATITUDE, res.data.results[0].LONGITUDE]
+          }
+          else{
+            this.dirFromInput = "Invalid Address"
+          }
+        })
+      }
+
+      if (!this.directionSet){
+        this.axios.get(url, {
+        params:{
+          searchVal: toLoc,
+          returnGeom: "Y",
+          getAddrDetails: "N"
+        }
+      })
+      .then(res => {
+        if (res.data.results.length > 0){
+          this.toCoords = [res.data.results[0].LATITUDE, res.data.results[0].LONGITUDE]
+        }
+        else{
+          this.dirToInput = "Invalid Address"
+        }
+      })
+      }
+
+    },
+    playTTSi(num){
+      var audio = new Audio(this.ttsAudio[num]);
+      audio.play()
     },
     ...mapActions(useSpotlightStore, [
       "show",
@@ -489,12 +696,13 @@ export default defineComponent({
     ...mapState(useCarparkStore, ["carparks"]),
     ...mapState(useRentalStore, ["rentals"]),
     ...mapState(useSpotlightStore, ["data", "spotlight"]),
+    ...mapState(useDirectionStore, ["route", "turnbyturn", "tripDuration", "ttsAudio"]),
   },
   watch: {
     data: {
       handler(old) {
         if (Object.keys(old).length > 0) {
-          this.activateSpotlight();
+          this.activateSpotlight(String(old.lat) + String(old.lng));
         }
       },
       immediate: true,
@@ -504,6 +712,13 @@ export default defineComponent({
     return {
       rawCarparks,
       rates: [] as DayRate[] | DayRate,
+      dirFromInput: "",
+      dirToInput: "",
+      toCoords: [0,0],
+      fromCoords: [0,0],
+      geocoords: [],
+      directionSet: false,
+      selected: "",
     };
   },
 });
@@ -559,9 +774,31 @@ export default defineComponent({
   justify-content: space-between;
   width: 100%;
 }
+.tbt-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding-bottom: 0.5rem;
+}
+.list-dir-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 1rem;
+  padding-top: 0.5rem;
+  font-weight: 500;
+}
 .carpark-lots {
-  font-size: 0.7rem;
+  font-size: 1.2rem;
+  font-weight: 400;
+  text-align: center;
   color: #5f5f5f;
+}
+
+.carpark-lots-none{
+  color:#d85050;
+  font-weight: 100;
 }
 .list-btn-group {
   display: flex;
@@ -570,6 +807,7 @@ export default defineComponent({
   width: 100%;
   border-top: 1px solid #e2e2e2;
   z-index: 10;
+  margin-top: 10px;
 }
 .list-btn {
   display: flex;
@@ -606,10 +844,63 @@ export default defineComponent({
   margin-right: 0.4rem;
 }
 
+.list-col-l {
+  float: left;
+  width: 70%;
+}
+.list-col-r {
+  float: left;
+  width: 30%;
+}
+
+.tbt-col-r {
+  float: left;
+  width: 30%;
+  font-size: 1.5rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+.tbt-col-l {
+  padding-left: 1rem;
+  float: left;
+  width: 60%;
+  text-align: center;
+}
+
+.list-dir-col-l{
+  float: left;
+  width: 20%;
+}
+
+.list-dir-col-r{
+  float: left;
+  width: 80%;
+  padding-right: 2rem;
+}
+
+.input-dir{
+  display: flex;
+  width: 100%;  
+  height: 2rem;
+  box-sizing: border-box;
+  border: 0.08rem solid #8f8f8f;
+  border-radius: 4px;
+  font-size: 1rem;
+  padding-left: 0.5rem;
+}
+
 .list-meta-car {
   display: flex;
   align-items: center;
 }
+.list-meta-r {
+  color: #5f5f5f;
+  text-align: center;
+  font-size: 0.6rem;
+  margin: 0.2rem 0;
+}
+
 .spotlight {
   display: flex;
   align-items: flex-start;
@@ -672,16 +963,20 @@ export default defineComponent({
   margin: 1rem 1rem;
   box-sizing: border-box;
 }
+
+.rate-table th{
+  font-weight: 500;
+}
 .rate-table,
 .rate-table th,
 .rate-table td {
   border: 1px solid #5f5f5f;
   padding: 0.5rem;
+  font-size: 0.8rem;
 }
 .rate-table th {
-  background-color: rgb(15, 10, 112);
+  background-color: #4aada3;
   color: #fff;
-  font-size: 0.8rem;
 }
 .spotlight-directions-btn {
   flex: 100%;

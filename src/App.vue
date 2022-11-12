@@ -30,7 +30,7 @@ export default defineComponent({
       if (
         /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
           navigator.userAgent
-        )
+        ) 
       ) {
         return true;
       } else {
@@ -60,6 +60,9 @@ export default defineComponent({
   <div class="app">
     <Transition name="slide-fade">
       <div class="side" v-if="sidebar">
+        <div class="logonav">
+          <a href="/carter.html"><div class="logo">CARTER</div></a>
+        </div>
         <div class="nav">
           <div class="nav-left">
             <RouterLink
@@ -75,6 +78,13 @@ export default defineComponent({
               router-link-active="nav-link-active"
               @click="deactivateSpotlight"
               >Rental</RouterLink
+            >
+            <RouterLink
+              :to="{ name: 'search' }"
+              class="nav-link"
+              router-link-active="nav-link-active"
+              @click="deactivateSpotlight"
+              >Directions</RouterLink
             >
           </div>
           <div class="nav-right">
@@ -134,9 +144,28 @@ export default defineComponent({
 </template>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 body {
   max-height: 100vh;
   width: 100%;
+}
+a:link, a:visited, a:hover, a:active{
+  text-decoration:none;
+}
+.logo{
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  color:#fff;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+}
+.logonav{
+  display: block;
+  padding: 1rem;
+  border-bottom: 1px solid #f0f0f0;
+  justify-content: space-between;
+  background-color: #262626;
 }
 .side {
   display: flex;

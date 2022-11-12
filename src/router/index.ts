@@ -13,6 +13,16 @@ const router = createRouter({
       name: "rental",
       component: () => import("../views/Rental.vue"),
     },
+    {
+      path: "/directions",
+      name: "directions",
+      component: () => import("../views/Directions.vue"),
+    },
+    {
+      path: "/search",
+      name: "search",
+      component: () => import("../views/Search.vue"),
+    },
   ],
 });
 
