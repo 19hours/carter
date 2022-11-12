@@ -7,7 +7,7 @@
       >
         <div class="spotlight-title">
           {{ (data as Carpark).address }}
-          <div @click="toggleSpotlight()">
+          <div @click="toggleSpotlight(String((data as Carpark).lat) + String((data as Carpark).lng))">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -21,66 +21,72 @@
             </svg>
           </div>
         </div>
-        <div class="spotlight-row">
-          <div class="spotlight-meta">
-            {{
-              (data as Carpark).freeParking === "NO"
-                ? "Paid parking available"
-                : "Free parking available"
-            }}
-          </div>
-          <div>
-            <div class="carpark-lots">
-              {{ (data as Carpark).availableLots }} /
-              {{ (data as Carpark).totalLots }}
+
+        <div class="list-row">
+          <div class="list-col">
+            <div class="spotlight-meta">
+              {{
+                (data as Carpark).shortTermParking === "No"
+                  ? "No parking only"
+                  : "Short term parking available"
+              }}
             </div>
-            <div class="carpark-indicator">
-              <div
-                class="indicator"
-                :class="
-                (data as Carpark).availableLots / (data as Carpark).totalLots >= 0.25
-                  ? 'indicator-green'
-                  : (data as Carpark).availableLots > 0
-                  ? 'indicator-orange'
-                  : ''
-              "
-              ></div>
-              <div
-                class="indicator"
-                :class="
-                (data as Carpark).availableLots / (data as Carpark).totalLots >= 0.5
-                  ? 'indicator-green'
-                  : ''
-              "
-              ></div>
-              <div
-                class="indicator"
-                :class="
-                (data as Carpark).availableLots / (data as Carpark).totalLots >= 0.75
-                  ? 'indicator-green'
-                  : ''
-              "
-              ></div>
-              <div
-                class="indicator"
-                :class="
-                (data as Carpark).availableLots / (data as Carpark).totalLots >= 0.9
-                  ? 'indicator-green'
-                  : ''
-              "
-              ></div>
+            <div class="spotlight-meta">{{ (data as Carpark).type }} carpark</div>
+            <div class="spotlight-meta">
+              Height restriction: {{ (data as Carpark).gantryHeight }}m
+            </div>
+            <div class="spotlight-meta">
+              Carpark Decks: {{ (data as Carpark).carParkDecks }}
+            </div>
+            <div class="spotlight-meta">System: {{ (data as Carpark).system }}</div>
+          </div>
+          <div class="list-col-r">
+            <div>
+              <div class="carpark-lots" :class="(data as Carpark).availableLots == 0 && 'carpark-lots-none'">
+                {{ (data as Carpark).availableLots }} / {{ (data as Carpark).totalLots }}
+              </div>
+              <div class="carpark-indicator">
+                <div
+                  class="indicator"
+                  :class="
+                    (data as Carpark).availableLots / (data as Carpark).totalLots >= 0.25
+                      ? 'indicator-green'
+                      : (data as Carpark).availableLots > 0
+                      ? 'indicator-orange'
+                      : ''
+                  "
+                ></div>
+                <div
+                  class="indicator"
+                  :class="
+                    (data as Carpark).availableLots / (data as Carpark).totalLots >= 0.5
+                      ? 'indicator-green'
+                      : ''
+                  "
+                ></div>
+                <div
+                  class="indicator"
+                  :class="
+                    (data as Carpark).availableLots / (data as Carpark).totalLots >= 0.75
+                      ? 'indicator-green'
+                      : ''
+                  "
+                ></div>
+                <div
+                  class="indicator"
+                  :class="
+                    (data as Carpark).availableLots / (data as Carpark).totalLots >= 0.9
+                      ? 'indicator-green'
+                      : ''
+                  "
+                ></div>
+              </div>
+              <div class="list-meta-r" v-if="(data as Carpark).availableLots != 0">Carpark lots available</div>
+              <div class="list-meta-r" v-if="(data as Carpark).availableLots == 0">No carpark lots  </div>
             </div>
           </div>
         </div>
-        <div class="spotlight-meta">{{ (data as Carpark).type }} carpark</div>
-        <div class="spotlight-meta">
-          Height restrictions: {{ (data as Carpark).gantryHeight }}m
-        </div>
-        <div class="spotlight-meta">
-          Carpark Decks: {{ (data as Carpark).carParkDecks }}
-        </div>
-        <div class="spotlight-meta">System: {{ (data as Carpark).system }}</div>
-        <table class="rate-table">
+        <table class="rate-table" v-if="(data as Carpark).shortTermParking === 'Yes'">
           <thead>
             <tr>
               <th>Day</th>
@@ -96,12 +102,21 @@
               <td>{{ carparkRate.startTime }} - {{ carparkRate.endTime }}</td>
               <td>
                 {{
-                  carparkRate.rate !== "Free" ? `$${carparkRate.rate}` : "Free"
+                  carparkRate.rate !== 0.0 ? `$${parseFloat(carparkRate.rate).toFixed(2)}` : "Free"
                 }}
               </td>
             </tr>
           </tbody>
         </table>
+
+        <table class="rate-table" v-if="(data as Carpark).shortTermParking === 'No'">
+          <thead>
+            <tr>
+              <th>No parking available</th>
+            </tr>
+          </thead>
+        </table>
+
         <div class="list-btn-group">
           <div class="list-btn spotlight-directions-btn">
             <svg
@@ -127,7 +142,7 @@
       >
         <div class="spotlight-title">
           {{ (data as Rental).address }}
-          <div @click="toggleSpotlight()">
+          <div @click="toggleSpotlight(String((data as Rental).lat) + String((data as Rental).lng))">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -216,58 +231,64 @@
       >
         <div class="list-title">{{ carpark.address }}</div>
         <div class="list-row">
-          <div class="list-meta">
-            {{
-              carpark.freeParking === "NO"
-                ? "Paid parking available"
-                : "Free parking available"
-            }}
-          </div>
-          <div>
-            <div class="carpark-lots">
-              {{ carpark.availableLots }} / {{ carpark.totalLots }}
+          <div class="list-col">
+            <div class="list-meta">
+              {{
+                (data as Carpark).shortTermParking === "No"
+                  ? "No parking only"
+                  : "Short term parking available"
+              }}
             </div>
-            <div class="carpark-indicator">
-              <div
-                class="indicator"
-                :class="
-                  carpark.availableLots / carpark.totalLots >= 0.25
-                    ? 'indicator-green'
-                    : carpark.availableLots > 0
-                    ? 'indicator-orange'
-                    : ''
-                "
-              ></div>
-              <div
-                class="indicator"
-                :class="
-                  carpark.availableLots / carpark.totalLots >= 0.5
-                    ? 'indicator-green'
-                    : ''
-                "
-              ></div>
-              <div
-                class="indicator"
-                :class="
-                  carpark.availableLots / carpark.totalLots >= 0.75
-                    ? 'indicator-green'
-                    : ''
-                "
-              ></div>
-              <div
-                class="indicator"
-                :class="
-                  carpark.availableLots / carpark.totalLots >= 0.9
-                    ? 'indicator-green'
-                    : ''
-                "
-              ></div>
+            <div class="list-meta">{{ carpark.type }} carpark</div>
+            <div class="list-meta">
+              Height restriction: {{ carpark.gantryHeight }}m
             </div>
           </div>
-        </div>
-        <div class="list-meta">{{ carpark.type }} carpark</div>
-        <div class="list-meta">
-          Height restrictions: {{ carpark.gantryHeight }}m
+          <div class="list-col-r">
+            <div>
+              <div class="carpark-lots" :class="carpark.availableLots == 0 && 'carpark-lots-none'">
+                {{ carpark.availableLots }} / {{ carpark.totalLots }}
+              </div>
+              <div class="carpark-indicator">
+                <div
+                  class="indicator"
+                  :class="
+                    carpark.availableLots / carpark.totalLots >= 0.25
+                      ? 'indicator-green'
+                      : carpark.availableLots > 0
+                      ? 'indicator-orange'
+                      : ''
+                  "
+                ></div>
+                <div
+                  class="indicator"
+                  :class="
+                    carpark.availableLots / carpark.totalLots >= 0.5
+                      ? 'indicator-green'
+                      : ''
+                  "
+                ></div>
+                <div
+                  class="indicator"
+                  :class="
+                    carpark.availableLots / carpark.totalLots >= 0.75
+                      ? 'indicator-green'
+                      : ''
+                  "
+                ></div>
+                <div
+                  class="indicator"
+                  :class="
+                    carpark.availableLots / carpark.totalLots >= 0.9
+                      ? 'indicator-green'
+                      : ''
+                  "
+                ></div>
+              </div>
+              <div class="list-meta-r" v-if="carpark.availableLots != 0">Carpark lots available</div>
+              <div class="list-meta-r" v-if="carpark.availableLots == 0">No carpark lots  </div>
+            </div>
+          </div>
         </div>
         <div class="list-btn-group">
           <div class="list-btn">
@@ -395,7 +416,6 @@ export default defineComponent({
         useMap.flyTo(location.lng, location.lat);
       }
       this.show(location);
-      this.activateSpotlight();
     },
     bookRentalCar() {
       window.open("https://membership.bluesg.com.sg/account/home/");
@@ -403,11 +423,11 @@ export default defineComponent({
     isCarpark(data: Carpark | Rental): data is Carpark {
       return (<Carpark>data).availableLots !== undefined;
     },
-    toggleSpotlight() {
+    toggleSpotlight(latlng) {
       if (this.spotlight) {
         this.deactivateSpotlight();
       } else {
-        this.activateSpotlight();
+        this.activateSpotlight(latlng);
       }
     },
     getCarparkRates(address: string) {
@@ -494,7 +514,7 @@ export default defineComponent({
     data: {
       handler(old) {
         if (Object.keys(old).length > 0) {
-          this.activateSpotlight();
+          this.activateSpotlight(String(old.lat) + String(old.lng));
         }
       },
       immediate: true,
@@ -560,8 +580,15 @@ export default defineComponent({
   width: 100%;
 }
 .carpark-lots {
-  font-size: 0.7rem;
+  font-size: 1.2rem;
+  font-weight: 400;
+  text-align: center;
   color: #5f5f5f;
+}
+
+.carpark-lots-none{
+  color:#d85050;
+  font-weight: 100;
 }
 .list-btn-group {
   display: flex;
@@ -606,10 +633,26 @@ export default defineComponent({
   margin-right: 0.4rem;
 }
 
+.list-col-l {
+  float: left;
+  width: 70%;
+}
+.list-col-r {
+  float: left;
+  width: 30%;
+}
+
 .list-meta-car {
   display: flex;
   align-items: center;
 }
+.list-meta-r {
+  color: #5f5f5f;
+  text-align: center;
+  font-size: 0.6rem;
+  margin: 0.2rem 0;
+}
+
 .spotlight {
   display: flex;
   align-items: flex-start;
@@ -672,16 +715,20 @@ export default defineComponent({
   margin: 1rem 1rem;
   box-sizing: border-box;
 }
+
+.rate-table th{
+  font-weight: 500;
+}
 .rate-table,
 .rate-table th,
 .rate-table td {
   border: 1px solid #5f5f5f;
   padding: 0.5rem;
+  font-size: 0.8rem;
 }
 .rate-table th {
-  background-color: rgb(15, 10, 112);
+  background-color: #4aada3;
   color: #fff;
-  font-size: 0.8rem;
 }
 .spotlight-directions-btn {
   flex: 100%;
