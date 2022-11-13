@@ -1,8 +1,12 @@
 # carter
 
-![screenshot](images/screenshot.png)
+![screenshot](images/carter-home.png)
 
-![screenshot](images/screenshot2.png)
+![screenshot](images/carter-carpark.png)
+
+![screenshot](images/carter-rental.png)
+
+![screenshot](images/carter-directions.png)
 
 This web application allows users to check public carpark statuses, rental car availability and more.
 
@@ -10,10 +14,9 @@ This web application allows users to check public carpark statuses, rental car a
 
 1. Rental of cars
 2. Carpark recommender
-3. Cost Tracker
-4. Routing
-5. Point of interest recommendation
-6. Text to Speech for searching options while driving or readback to drivers when they are driving (optional)
+3. Cost Advisor
+4. Directions to carpark or car rental
+5. Text to Speech for Directions
 
 ## Deployment
 
