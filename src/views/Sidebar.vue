@@ -563,7 +563,7 @@ export default defineComponent({
     search(lng, lat, placeName){
       this.toCoords = [lat, lng]
       this.dirToInput = placeName
-      this.directionSet = true
+      this.directionSet = placeName
       this.deactivateSpotlight()
       this.$router.push({ name: "search" })
     },
@@ -685,7 +685,7 @@ export default defineComponent({
         })
       }
 
-      if (!this.directionSet){
+      if (this.directionSet != toLoc){
         this.axios.get(url, {
         params:{
           searchVal: toLoc,
@@ -759,7 +759,7 @@ export default defineComponent({
       toCoords: [0,0],
       fromCoords: [0,0],
       geocoords: [],
-      directionSet: false,
+      directionSet: "",
       selected: "",
     };
   },
