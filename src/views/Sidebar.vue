@@ -573,6 +573,7 @@ export default defineComponent({
       for (let carpark of rawCarparks) {
         if (address === carpark.address) {
           if (carpark.parking_rate instanceof Array) {
+            console.log(carpark.parking_rate)
             for (let rate of carpark.parking_rate) {
               let days = rate.day.toString().split("");
               for (let day of days) {
@@ -612,6 +613,49 @@ export default defineComponent({
                 }
               }
             }
+          }
+          else{
+            let days = carpark.parking_rate.day.toString().split("");
+              for (let day of days) {
+                let dayParsed;
+                switch (parseInt(day)) {
+                  case 1:
+                    dayParsed = "Monday";
+                    break;
+                  case 2:
+                    dayParsed = "Tuesday";
+                    break;
+                  case 3:
+                    dayParsed = "Wednesday";
+                    break;
+                  case 4:
+                    dayParsed = "Thursday";
+                    break;
+                  case 5:
+                    dayParsed = "Friday";
+                    break;
+                  case 6:
+                    dayParsed = "Saturday";
+                    break;
+                  case 7:
+                    dayParsed = "Sunday";
+                    break;
+                }
+                
+                  let rates = carpark.parking_rate.rate
+                  for (let rate of rates){
+                    let startTime = rate.time_range.slice(0, 4);
+                    let endTime = rate.time_range.slice(4);
+                    data.push({
+                      day: dayParsed,
+                      startTime,
+                      endTime,
+                      rate: rate.rate_cost,
+                    });
+                  }
+
+
+              }
           }
         }
       }
