@@ -207,14 +207,14 @@
             class="list-btn spotlight-directions-btn"
             @click="bookRentalCar()"
           >
-            <svg
+          <svg
               xmlns="http://www.w3.org/2000/svg"
               xmlns:xlink="http://www.w3.org/1999/xlink"
-              viewBox="0 0 512 512"
+              viewBox="0 0 448 512"
               class="list-btn-icon"
             >
               <path
-                d="M502.61 233.32L278.68 9.39c-12.52-12.52-32.83-12.52-45.36 0L9.39 233.32c-12.52 12.53-12.52 32.83 0 45.36l223.93 223.93c12.52 12.53 32.83 12.53 45.36 0l223.93-223.93c12.52-12.53 12.52-32.83 0-45.36zm-100.98 12.56l-84.21 77.73c-5.12 4.73-13.43 1.1-13.43-5.88V264h-96v64c0 4.42-3.58 8-8 8h-32c-4.42 0-8-3.58-8-8v-80c0-17.67 14.33-32 32-32h112v-53.73c0-6.97 8.3-10.61 13.43-5.88l84.21 77.73c3.43 3.17 3.43 8.59 0 11.76z"
+                d="M448 80v352c0 26.51-21.49 48-48 48H48c-26.51 0-48-21.49-48-48V80c0-26.51 21.49-48 48-48h352c26.51 0 48 21.49 48 48zm-88 16H248.029c-21.313 0-32.08 25.861-16.971 40.971l31.984 31.987L67.515 364.485c-4.686 4.686-4.686 12.284 0 16.971l31.029 31.029c4.687 4.686 12.285 4.686 16.971 0l195.526-195.526l31.988 31.991C358.058 263.977 384 253.425 384 231.979V120c0-13.255-10.745-24-24-24z"
                 fill="currentColor"
               ></path>
             </svg>
@@ -335,7 +335,7 @@
         </div>
         <div class="list-meta">Charging slots: {{ car.charge_slots }}</div>
         <div class="list-btn-group">
-          <div class="list-btn">
+          <div class="list-btn spotlight-directions-btn">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -349,7 +349,7 @@
             </svg>
             <span class="list-btn-text">Info</span>
           </div>
-          <div class="list-btn">
+          <div class="list-btn spotlight-directions-btn">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -563,7 +563,7 @@ export default defineComponent({
     search(lng, lat, placeName){
       this.toCoords = [lat, lng]
       this.dirToInput = placeName
-      this.directionSet = true
+      this.directionSet = placeName
       this.deactivateSpotlight()
       this.$router.push({ name: "search" })
     },
@@ -685,7 +685,7 @@ export default defineComponent({
         })
       }
 
-      if (!this.directionSet){
+      if (this.directionSet != toLoc){
         this.axios.get(url, {
         params:{
           searchVal: toLoc,
@@ -759,7 +759,7 @@ export default defineComponent({
       toCoords: [0,0],
       fromCoords: [0,0],
       geocoords: [],
-      directionSet: false,
+      directionSet: "",
       selected: "",
     };
   },
