@@ -545,7 +545,7 @@ export default defineComponent({
         navigator.geolocation.getCurrentPosition((position) => {
           var startlat = position.coords.longitude;
           var startlng = position.coords.latitude;
-          this.geocoords = [startlat, startlng]
+          this.geocoords = [startlng, startlat]
           this.dirFromInput = "Use Current Location"
         })
       }
@@ -572,8 +572,6 @@ export default defineComponent({
       let data = [];
       for (let carpark of rawCarparks) {
         if (address === carpark.address) {
-
-          
           if (carpark.parking_rate instanceof Array) {
             for (let rate of carpark.parking_rate) {
               let days = rate.day.toString().split("");
