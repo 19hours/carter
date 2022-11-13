@@ -556,8 +556,8 @@ export default defineComponent({
     directions(){
       this.getLocation(this.dirFromInput, this.dirToInput);
       if (this.toCoords != null && this.fromCoords != null){
-        setTimeout( () => this.setLocation(this.fromCoords, this.toCoords), 1000);
-        setTimeout( () => this.$router.push({ name: "directions" }), 1000);
+        setTimeout( () => this.setLocation(this.fromCoords, this.toCoords), 500);
+        setTimeout( () => this.$router.push({ name: "directions" }), 500);
       }
     },
     search(lng, lat, placeName){
